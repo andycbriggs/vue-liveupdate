@@ -15,13 +15,20 @@ export function useLiveUpdate(director, config = {}) {
         throw new Error("'director' parameter is required.");
     }
 
-    // Validate configuration parameters
-    const allowedConfigKeys = ['updateFrequencyMs'];
-    const invalidKeys = Object.keys(config).filter(key => !allowedConfigKeys.includes(key));
-    if (invalidKeys.length > 0) {
-        console.error(`Invalid configuration keys: ${invalidKeys.join(', ')}. Allowed keys: ${allowedConfigKeys.join(', ')}`);
-        throw new Error(`Invalid configuration keys: ${invalidKeys.join(', ')}`);
+    // Validate configuration helper function
+    function validateConfiguration(configuration, context = 'configuration') {
+        if (!configuration) return;
+        
+        const allowedConfigKeys = ['updateFrequencyMs'];
+        const invalidKeys = Object.keys(configuration).filter(key => !allowedConfigKeys.includes(key));
+        if (invalidKeys.length > 0) {
+            console.error(`Invalid ${context} keys: ${invalidKeys.join(', ')}. Allowed keys: ${allowedConfigKeys.join(', ')}`);
+            throw new Error(`Invalid ${context} keys: ${invalidKeys.join(', ')}`);
+        }
     }
+
+    // Validate global configuration
+    validateConfiguration(config, 'configuration');
 
     // Initialize the WebSocket connection & provide reactive data.
     const socketUrl = `ws://${director}/api/session/liveupdate`;
@@ -107,14 +114,7 @@ export function useLiveUpdate(director, config = {}) {
         const properties = Object.values(refNameToPropertyPaths);
         
         // Validate per-subscription configuration parameters
-        if (configuration) {
-            const allowedConfigKeys = ['updateFrequencyMs'];
-            const invalidKeys = Object.keys(configuration).filter(key => !allowedConfigKeys.includes(key));
-            if (invalidKeys.length > 0) {
-                console.error(`Invalid subscription configuration keys: ${invalidKeys.join(', ')}. Allowed keys: ${allowedConfigKeys.join(', ')}`);
-                throw new Error(`Invalid subscription configuration keys: ${invalidKeys.join(', ')}`);
-            }
-        }
+        validateConfiguration(configuration, 'subscription configuration');
         
         // Merge default configuration with per-subscription configuration
         const mergedConfiguration = { ...config, ...configuration };
