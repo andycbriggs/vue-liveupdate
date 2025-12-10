@@ -102,7 +102,7 @@ export default {
 
 #### Configuration Options
 
-Both `useLiveUpdate` and individual subscriptions accept an optional configuration object. Currently, the configuration object supports the `updateFrequencyMs` property to control how often updates are sent from the server.
+Both `useLiveUpdate` and individual subscriptions accept an optional configuration object. Currently, the configuration object supports the `updateFrequencyMs` property to control how often updates are sent from the server. The default, and highest, frequency is 50ms.
 
 **Global Configuration**: Provide a configuration object to `useLiveUpdate` to set defaults for all subscriptions:
 
@@ -121,7 +121,7 @@ const { offset } = liveUpdate.subscribe(
   { updateFrequencyMs: 500 }
 );
 
-// This subscription uses whatever default was set (or no throttling if none)
+// This subscription uses whatever set in `useLiveUpdate` (or the default, if unset)
 const { rotation } = liveUpdate.autoSubscribe('screen2:surface_1', ['object.rotation']);
 ```
 
